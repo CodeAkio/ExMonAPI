@@ -24,4 +24,10 @@ defmodule ExMonApiWeb.Router do
       live_dashboard "/dashboard", metrics: ExMonApiWeb.Telemetry
     end
   end
+
+  scope "/", ExMonApiWeb do
+    pipe_through :api
+
+    get "/", WelcomeController, :index
+  end
 end
