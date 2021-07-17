@@ -3,10 +3,16 @@ defmodule ExMonApiWeb.TrainersController do
 
   action_fallback ExMonApiWeb.FallbackController
 
+  def show(conn, %{"id" => id}) do
+    id
+    |> ExMonApi.fetch_trainer()
+    |> handle_response(conn, "show.json", :ok)
+  end
+
   def create(conn, params) do
     params
     |> ExMonApi.create_trainer()
-    |> handle_response(conn)
+    |> handle_response(conn, "create.json", :created)
   end
 
   def delete(conn, %{"id" => id}) do
@@ -15,10 +21,10 @@ defmodule ExMonApiWeb.TrainersController do
     |> handle_delete(conn)
   end
 
-  defp handle_response({:ok, trainer}, conn) do
+  defp handle_response({:ok, trainer}, conn, view, status) do
     conn
-    |> put_status(:created)
-    |> render("create.json", trainer: trainer)
+    |> put_status(status)
+    |> render(view, trainer: trainer)
   end
 
   defp handle_response({:error, _changeset} = error, _conn), do: error
